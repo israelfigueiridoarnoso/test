@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "prices")
 public class Price {
 
     @Id
@@ -28,7 +29,7 @@ public class Price {
 
     private LocalDateTime endDate;
 
-    // NOTE: In case of scaling, another entity (e.g., PriceRate) could be created (with fields like name,
+    // NOTE: In case of scaling, another entity (e.g., PriceRate) could be created (with fields like id, name,
     // description, etc.), but for simplicity, it was implemented just as a field for this test
     private Integer priceRate;
 

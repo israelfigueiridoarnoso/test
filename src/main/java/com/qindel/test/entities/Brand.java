@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "brands")
 public class Brand {
 
     @Id
@@ -19,6 +20,7 @@ public class Brand {
 
     private String name;
 
+    // TODO: ¿tienen sentido cascade y orphanRemoval?
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Price> prices = new ArrayList<>();
 

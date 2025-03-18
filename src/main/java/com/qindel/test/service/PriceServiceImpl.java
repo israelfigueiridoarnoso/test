@@ -15,7 +15,7 @@ public class PriceServiceImpl implements PriceService {
     @Autowired
     private PriceRepository priceRepository;
 
-    // Get the
+    // Get the product Price with the highest priority
     @Override
     public Price getTopProductPrice(Long productId, Long brandId, LocalDateTime date) {
         return priceRepository.findTopPriorityPrice(productId, brandId, date)

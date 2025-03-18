@@ -28,7 +28,7 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
                                              @Param("appDate") LocalDateTime appDate,
                                              Pageable pageable);
 
-    // Get the top priority Price filtered by product, brand and date
+    // Get the top priority Price filtered by product, brand and date (the use of pagination is similar to "LIMIT 1")
     default Optional<Price> findTopPriorityPrice(Long productId, Long brandId, LocalDateTime appDate) {
         return findByProductAndBrandAndDate(productId, brandId, appDate, PageRequest.of(0,1)).stream().findFirst();
     }

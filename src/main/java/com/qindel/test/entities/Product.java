@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "products")
 public class Product {
 
     @Id
@@ -22,6 +23,7 @@ public class Product {
 
     private String name;
 
+    // orphanRemoval -> if a product is deleted, all its prices are deleted too
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Price> prices = new ArrayList<>();
 
