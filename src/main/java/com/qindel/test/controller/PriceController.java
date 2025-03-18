@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
-@RestController
+@RestController("/prices")
 public class PriceController {
 
     @Autowired
@@ -24,8 +24,8 @@ public class PriceController {
         // Get the product Price
          Price price = priceService.getTopProductPrice(productId, brandId, date);
 
-         // TODO: Convert Price to PriceDTO
-        PriceDTO response = new PriceDTO();
+         // Convert Price to PriceDTO
+        PriceDTO response = DTOConverter.toDto(price);
 
          return ResponseEntity.ok(response);
     }
