@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class PriceServiceImpl implements PriceService {
@@ -17,8 +18,7 @@ public class PriceServiceImpl implements PriceService {
 
     // Get the product Price with the highest priority
     @Override
-    public Price getTopProductPrice(Long productId, Long brandId, LocalDateTime date) {
-        return priceRepository.findTopPriorityPrice(productId, brandId, date)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No price found"));
+    public Optional<Price> getTopProductPrice(Long productId, Long brandId, LocalDateTime date) {
+        return priceRepository.findTopPriorityPrice(productId, brandId, date);
     }
 }
