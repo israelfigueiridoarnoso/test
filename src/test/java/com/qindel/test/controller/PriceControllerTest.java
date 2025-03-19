@@ -1,7 +1,8 @@
 package com.qindel.test.controller;
 
-import com.qindel.test.dto.DTOConverter;
-import com.qindel.test.dto.PriceDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.qindel.test.entities.Brand;
 import com.qindel.test.entities.Price;
 import com.qindel.test.entities.Product;
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -42,11 +44,19 @@ class PriceControllerTest {
     private PriceController priceController;
 
     private Price testPrice;
-    private PriceDTO testDto;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(priceController).build();
+        // Set up ObjectMapper to serialize LocalDateTime as a ISO String (due to JSON)
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        // If not disabled, a Timestamp/list of values is returned
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(priceController)
+                .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
+                .build();
 
         // Create a test Product
         Product testProduct = new Product();
@@ -65,9 +75,6 @@ class PriceControllerTest {
         testPrice.setProduct(testProduct);
         testPrice.setPrice(BigDecimal.valueOf(35.50));
         testPrice.setCurrency("EUR");
-
-        // Convert to a test PriceDTO
-        testDto = DTOConverter.toDto(testPrice);
     }
 
     @Test
@@ -97,7 +104,12 @@ class PriceControllerTest {
                 .param("brandId", "1")
                 .param("date", "2020-06-14T10:00:00")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect((jsonPath("$.price").value(testDto.getPrice())))
+                .andExpect(jsonPath("$.productId").value(35455))
+                .andExpect(jsonPath("$.brandId").value(1))
+                .andExpect(jsonPath("$.price").value(35.50))
+                .andExpect(jsonPath("$.currency").value("EUR"))
+                .andExpect(jsonPath("$.startDate").value("2020-06-14T00:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:00"))
                 .andExpect(status().isOk());
     }
 
